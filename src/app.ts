@@ -4,11 +4,9 @@ import express from "express";
 import helmet from "helmet";
 import mongoose from "mongoose";
 
-import authRoute from "./auth/routes";
 import usersRoute from "./users/routes";
 import Logger from "./utils/logger";
 import morganMiddleware from "./utils/middleware/morganMiddleware";
-import verifyToken from "./utils/middleware/verifyAuthToken";
 
 // Initialize configuration
 dotenv.config();
@@ -26,8 +24,7 @@ app.use(express.json()); // Enable JSON body parser
 app.use(express.urlencoded({ extended: true }));
 
 // Application routes
-app.use("/auth", authRoute);
-app.use("/users", verifyToken, usersRoute);
+app.use("/users", usersRoute);
 
 if (process.env.NODE_ENV != "test") {
   try {
