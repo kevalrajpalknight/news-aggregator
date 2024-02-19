@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
-    
+
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
@@ -13,7 +13,7 @@
     "esModuleInterop": true,
     "target": "es2022",
     "sourceMap": true,
-    "outDir": "./dist",
+    "outDir": "./build",
     "baseUrl": "./",
     "incremental": true,
     "composite": true,
@@ -22,7 +22,7 @@
     "typeRoots": ["../../node_modules/@types", "./node_modules/@types"]
   },
   "include": ["src"],
-  "exclude": ["./dist"],
+  "exclude": ["./build"],
   "ts-node": {
     "files": true
   },
