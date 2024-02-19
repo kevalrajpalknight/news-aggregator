@@ -1,8 +1,8 @@
-import cors from 'cors';
-import dotenv from 'dotenv';
-import express from 'express';
-import helmet from 'helmet';
-import morgan from 'morgan';
+import cors from "cors";
+import dotenv from "dotenv";
+import express from "express";
+import helmet from "helmet";
+import morgan from "morgan";
 
 // Initialize configuration
 dotenv.config();
@@ -15,10 +15,9 @@ const port = process.env["PORT"] || 8000;
 // Express configuration
 app.use(cors()); // Enable CORS
 app.use(helmet()); // Enable Helmet
-app.use(morgan('dev')); // Enable Morgan
+app.use(morgan("dev")); // Enable Morgan
 app.use(express.json()); // Enable JSON body parser
 app.use(express.urlencoded({ extended: true }));
-
 
 // Start Express server
 app.listen(port, () => {
