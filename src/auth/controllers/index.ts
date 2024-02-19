@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { type Request, type Response } from "express";
+import jwt from "jsonwebtoken";
 
 import User from "../../users/models/users";
 
@@ -25,5 +26,41 @@ export function signUp(req: Request, res: Response): void {
     })
     .catch((err) => {
       return res.status(500).send({ message: err._message });
+    });
+}
+
+export function signIn(req: Request, res: Response): void {
+  const { email, password } = req.body;
+  User.findOne({ email: email })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: "User not found" });
+      }
+
+      let passwordIsValid = bcrypt.compareSync(password, user.password);
+      if (!passwordIsValid) {
+        return res.status(401).send({ message: "Invalid password" });
+      } else {
+        const token = jwt.sign(
+          {
+            id: user.id,
+          },
+          process.env.API_SECRET,
+          {
+            expiresIn: 86400,
+          },
+        );
+
+        return res.status(200).json({
+          message: "Login Successful",
+          token: token,
+          user: {
+            id: user.id,
+          },
+        });
+      }
+    })
+    .catch((err) => {
+      return res.status(500).send({ message: err });
     });
 }
