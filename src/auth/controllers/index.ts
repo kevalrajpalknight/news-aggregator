@@ -25,7 +25,7 @@ export function signUp(req: Request, res: Response): void {
         .json({ user: data, message: "User created successfully" });
     })
     .catch((err) => {
-      return res.status(500).send({ message: err._message });
+      return res.status(500).send({ message: err.message });
     });
 }
 
