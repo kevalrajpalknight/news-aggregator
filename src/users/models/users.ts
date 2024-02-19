@@ -1,10 +1,8 @@
-import mongoose from "mongoose";
-import { UserInterface, UserRoles } from "../types";
-
-const Schema = mongoose.Schema;
+import { Schema, model } from "mongoose";
+import { UserInterface } from "../types";
 
 const userSchema = new Schema<UserInterface>({
-  fullName: {
+  name: {
     type: String,
     required: [true, "Fullname not provided"],
   },
@@ -21,15 +19,15 @@ const userSchema = new Schema<UserInterface>({
       message: "Not a valid email",
     },
   },
-  role: {
-    type: Number,
-    required: [true, "Role not provided"],
-    enum: UserRoles,
-  },
   password: {
     type: String,
     required: [true, "Password not provided"],
   },
+  preferences: {
+    type: [String],
+    default: [],
+  },
 });
 
-module.exports = mongoose.model("User", userSchema);
+const User = model<UserInterface>("User", userSchema);
+export default User;
