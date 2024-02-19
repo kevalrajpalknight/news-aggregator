@@ -4,6 +4,7 @@ import express from "express";
 import helmet from "helmet";
 import mongoose from "mongoose";
 
+import authRoute from "./auth/routes";
 import Logger from "./utils/logger";
 import morganMiddleware from "./utils/middleware/morganMiddleware";
 
@@ -21,6 +22,9 @@ app.use(helmet()); // Enable Helmet
 app.use(morganMiddleware);
 app.use(express.json()); // Enable JSON body parser
 app.use(express.urlencoded({ extended: true }));
+
+// Application routes
+app.use("/users", authRoute);
 
 if (process.env.NODE_ENV != "test") {
   try {
