@@ -74,3 +74,27 @@ export function fetchAllPreferences(req: Request, res: Response): void {
     });
   }
 }
+
+export function updateUserPreferences(req: Request, res: Response): void {
+  if (req.user) {
+    const preferences: Array<string> = req.body.preferences;
+    User.findOne({ _id: req.user._id })
+      .then((user) => {
+        if (!user) {
+          return res.status(404).send({ message: "User not found" });
+        }
+        user.preferences = preferences;
+        user.save();
+        return res
+          .status(200)
+          .send({ message: "updated preferences", user: user });
+      })
+      .catch((err) => {
+        return res.status(500).send({ message: err.message });
+      });
+  } else {
+    return res.status(403).send({
+      message: req.message,
+    });
+  }
+}
