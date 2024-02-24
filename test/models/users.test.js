@@ -1,22 +1,29 @@
-const User = require("../../build/src/users/models/users");
+const model = require("../../build/src/users/models/users");
 const bcrypt = require("bcrypt");
+
+const PASSWORD_SALT = process.env.PASSWORD_SALT
+  ? parseInt(process.env["PASSWORD_SALT"])
+  : 10;
+
 let expect;
+const User = model.default;
 
 import("chai").then((chai) => {
   expect = chai.expect;
 });
 
-describe("Creating the doucments in mongo db without mocking", () => {
+describe("Creating user", () => {
   it("Creates a new user successfuly", (done) => {
     const user = new User({
-      fullName: "test",
+      name: "test",
       email: "test123@gmail.com",
-      password: bcrypt.hashSync("test1234", 8),
+      password: bcrypt.hashSync("test1234", PASSWORD_SALT),
+      preferences: ["sport", "movies", "business"],
     });
     user
       .save()
       .then((user) => {
-        expect(user.fullName).equal("test");
+        expect(user.name).equal("test");
         done();
       })
       .catch((err) => {
@@ -27,31 +34,37 @@ describe("Creating the doucments in mongo db without mocking", () => {
 
   it("Validates the email of the user and fail for incorrect email", (done) => {
     const user = new User({
-      fullName: "test",
+      name: "test",
       email: "test@123@gmail.com",
-      role: "admin",
-      password: bcrypt.hashSync("test1234", 8),
+      password: bcrypt.hashSync("test1234", PASSWORD_SALT),
     });
     user.save().catch((err) => {
-      // expect(err._message).equal("User validation failed");
+      expect(err._message).equal("User validation failed");
       done();
     });
   });
 
-  it("validates the uniqueness of the email", (done) => {
-    done();
-  });
-
-  it("Validates the role of the user", (done) => {
+  it("validates the uniqueness of the email", async (done) => {
     const user = new User({
-      fullName: "test",
+      name: "test",
       email: "test123@gmail.com",
-      role: "some random role",
-      password: bcrypt.hashSync("test1234", 8),
+      password: bcrypt.hashSync("test1234", PASSWORD_SALT),
     });
-    user.save().catch((err) => {
-      // expect(err._message).equal("User validation failed");
+    try {
+      const initialUser = await user.save();
+      console.log(initialUser);
+      const anotherUser = new User({
+        name: "test",
+        email: "test123@gmail.com",
+        password: bcrypt.hashSync("test1234", PASSWORD_SALT),
+      });
+      await anotherUser.save();
+      console.log(anotherUser);
+      throw new Error("Shouldn't save the user");
+    } catch (err) {
+      console.error(err);
+      expect(err._message).equal("User validation failed");
       done();
-    });
+    }
   });
 });
