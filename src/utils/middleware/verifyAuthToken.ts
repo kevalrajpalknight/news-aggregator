@@ -3,36 +3,32 @@ import jwt from "jsonwebtoken";
 import User from "../../users/models/users";
 
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
-  if (req.headers?.authorization) {
-    jwt.verify(
-      req.headers.authorization,
-      process.env.API_SECRET,
-      function (err, decode) {
-        if (err) {
-          req.user = undefined;
-          req.message = "Header verification failed";
-          next();
-        } else {
-          User.findOne({
-            _id: decode.id,
+  const token = req.headers["authorization"]?.split("Bearer ")[1];
+  if (token) {
+    jwt.verify(token, process.env.API_SECRET, function (err, decode) {
+      if (err) {
+        const message: string = "Header verfy failed!";
+        return res.status(403).send({ message });
+      } else {
+        User.findOne({
+          _id: decode.id,
+        })
+          .then((user) => {
+            req.user = user;
+            req.message = "Found the user successfully";
+            next();
           })
-            .then((user) => {
-              req.user = user;
-              req.message = "Found the user successfully";
-              next();
-            })
-            .catch((err) => {
-              req.user = undefined;
-              req.message = err.message;
-              next();
-            });
-        }
-      },
-    );
+          .catch((err) => {
+            req.user = undefined;
+            const message: string = err.message;
+            return res.status(403).send({ message });
+          });
+      }
+    });
   } else {
     req.user = undefined;
-    req.message = "Authorization header not found";
-    next();
+    const message: string = "Authorization header not found";
+    return res.status(403).send({ message });
   }
 };
 

@@ -3,7 +3,9 @@ import Joi, { ValidationResult } from "joi";
 
 export const signUpSchema = Joi.object({
   name: Joi.string().required(),
-  email: Joi.string().email({ tlds: { allow: false } }),
+  email: Joi.string()
+    .email({ tlds: { allow: false } })
+    .required(),
   password: Joi.string().strict(),
   preferences: Joi.array().items(Joi.string()),
 });

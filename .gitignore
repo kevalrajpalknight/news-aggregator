@@ -2,3 +2,5 @@ node_modules
 .tap
 .env
 logs
+build
+.nyc_output

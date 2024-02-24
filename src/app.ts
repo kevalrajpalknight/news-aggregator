@@ -29,18 +29,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/users", usersRoute);
 app.use("/news", verifyToken, newsRoute);
 
-if (process.env.NODE_ENV != "test") {
-  try {
-    const database_uri = process.env.DATABASE_URI;
-    if (!database_uri) {
-      throw Error("Could not find the database URI");
-    } else {
-      mongoose.connect(database_uri);
-      Logger.info("Connected to the db");
-    }
-  } catch (err) {
-    Logger.error(err.message);
+try {
+  const database_uri =
+    process.env.NODE_ENV == "test"
+      ? process.env.TEST_DATABASE_URI
+      : process.env.DATABASE_URI;
+  if (!database_uri) {
+    throw Error("Could not find the database URI");
+  } else {
+    mongoose.connect(database_uri);
+    Logger.info("Connected to the db");
   }
+} catch (err) {
+  Logger.error(err.message);
 }
 
 // Start Express server
