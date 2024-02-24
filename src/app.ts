@@ -4,9 +4,11 @@ import express from "express";
 import helmet from "helmet";
 import mongoose from "mongoose";
 
+import newsRoute from "./news/routes";
 import usersRoute from "./users/routes";
 import Logger from "./utils/logger";
 import morganMiddleware from "./utils/middleware/morganMiddleware";
+import verifyToken from "./utils/middleware/verifyAuthToken";
 
 // Initialize configuration
 dotenv.config();
@@ -25,6 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Application routes
 app.use("/users", usersRoute);
+app.use("/news", verifyToken, newsRoute);
 
 if (process.env.NODE_ENV != "test") {
   try {
