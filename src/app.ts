@@ -29,9 +29,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/users", usersRoute);
 app.use("/news", verifyToken, newsRoute);
 
-if (process.env.NODE_ENV != "test") {
+if (process.env.NODE_ENV == "test") {
   try {
-    const database_uri = process.env.DATABASE_URI;
+    const database_uri = process.env.TEST_DATABASE_URI;
     if (!database_uri) {
       throw Error("Could not find the database URI");
     } else {

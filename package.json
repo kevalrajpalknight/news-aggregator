@@ -8,7 +8,7 @@
     "start": "node .",
     "dev": "npx nodemon src/app.ts",
     "pretest": "node -e \"if (process.version.slice(1).split('.')[0] < 18) { console.error('Unsupported Node.js version, please use version 18'); process.exit(1); }\"",
-    "test": "nyc mocha --recursive 'test/**/*.js' --exit"
+    "test": "npm run build && nyc mocha --recursive 'test/**/*.test.js' --exit"
   },
   "author": "Airtribe",
   "license": "ISC",
@@ -19,7 +19,7 @@
     "@types/morgan": "^1.9.9",
     "axios": "^1.6.7",
     "bcrypt": "^5.1.1",
-    "chai": "^5.1.0",
+    "chai": "^5.0.0",
     "chai-http": "^4.4.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.4",
