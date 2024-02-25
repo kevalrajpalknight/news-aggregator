@@ -4,7 +4,7 @@ import express from "express";
 import helmet from "helmet";
 import mongoose from "mongoose";
 
-import authRoute from "./auth/routes";
+import newsRoute from "./news/routes";
 import usersRoute from "./users/routes";
 import Logger from "./utils/logger";
 import morganMiddleware from "./utils/middleware/morganMiddleware";
@@ -26,21 +26,22 @@ app.use(express.json()); // Enable JSON body parser
 app.use(express.urlencoded({ extended: true }));
 
 // Application routes
-app.use("/auth", authRoute);
-app.use("/users", verifyToken, usersRoute);
+app.use("/users", usersRoute);
+app.use("/news", verifyToken, newsRoute);
 
-if (process.env.NODE_ENV != "test") {
-  try {
-    const database_uri = process.env.DATABASE_URI;
-    if (!database_uri) {
-      throw Error("Could not find the database URI");
-    } else {
-      mongoose.connect(database_uri);
-      Logger.info("Connected to the db");
-    }
-  } catch (err) {
-    Logger.error(err.message);
+try {
+  const database_uri =
+    process.env.NODE_ENV == "test"
+      ? process.env.TEST_DATABASE_URI
+      : process.env.DATABASE_URI;
+  if (!database_uri) {
+    throw Error("Could not find the database URI");
+  } else {
+    mongoose.connect(database_uri);
+    Logger.info("Connected to the db");
   }
+} catch (err) {
+  Logger.error(err.message);
 }
 
 // Start Express server
